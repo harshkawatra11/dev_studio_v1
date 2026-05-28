@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Workbench Studio v1.2 — Pitch Deck</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+
+    :root {
+      --scale: 1;
+      --slide-w: 1920px;
+      --slide-h: 1080px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      background: #121214;
+      font-family: 'Inter', sans-serif;
+      color: #000000;
+      overflow-y: auto;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 48px;
+      padding: 48px 0;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* Each wrapper holds one 1920x1080 slide and scales it to fit the viewport */
+    .slide-wrapper {
+      width: var(--slide-w);
+      height: var(--slide-h);
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+      background: #ffffff;
+      flex-shrink: 0;
+      position: relative;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .slide-wrapper:hover {
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.8);
+    }
+
+    .slide-container {
+      width: 1920px;
+      height: 1080px;
+      transform-origin: top left;
+      transform: scale(var(--scale));
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* ── Print / Save as PDF ── */
+    @page {
+      size: 1920px 1080px;
+      margin: 0;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html,
+      body {
+        background: #ffffff !important;
+        overflow: visible !important;
+        width: 1920px !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      body {
+        display: block !important;
+      }
+
+      .slide-wrapper {
+        width: 1920px !important;
+        height: 1080px !important;
+        max-height: 1080px !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        page-break-inside: avoid !important;
+        overflow: hidden !important;
+        position: relative !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+        background: #ffffff !important;
+        box-sizing: border-box !important;
+      }
+
+      .slide-container {
+        width: 1920px !important;
+        height: 1080px !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        transform: none !important;
+        transform-origin: top left !important;
+      }
+
+      .slide-wrapper:last-child {
+        page-break-after: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ======================= SLIDE 01 — COVER ======================= -->
+  <div class="slide-wrapper">
+    <div class="slide-container" data-screen-label="01 Cover"
+      style="position:relative;width:1920px;height:1080px;overflow:hidden;background:#ffffff;">
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:0;top:0;width:1920px;height:8px;background:#000000;z-index:1;"></div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:60px;width:600px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#000000;letter-spacing:2px;">
+          WORKBENCH&nbsp;STUDIO&nbsp;·&nbsp;v1.2</div>
+      </div>
+
+
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:230px;width:120px;height:8px;background:#F59E0B;z-index:1;"></div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:268px;width:1680px;z-index:10;">
+        <div style="font-size:188px;font-weight:900;line-height:0.92;letter-spacing:-6px;color:#000000;">
+          Workbench<br>Studio.</div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:124px;top:660px;width:1400px;z-index:10;">
+        <div style="font-size:36px;font-weight:500;line-height:1.3;color:#000000;letter-spacing:-0.5px;">
+          Natural Language Schema Migration — powered by a
+          <span style="font-weight:800;">four-agent AI pipeline.</span>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:810px;width:1680px;height:120px;z-index:5;">
+        <svg width="1680" height="120" viewBox="0 0 1680 120" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <rect x="0" y="20" width="370" height="80" rx="40" fill="#16A34A" />
+          <text x="185" y="56" fill="#ffffff" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700"
+            text-anchor="middle" letter-spacing="2">01 · SQL</text>
+          <text x="185" y="82" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="800"
+            text-anchor="middle">Database Agent</text>
+          <line x1="378" y1="60" x2="428" y2="60" stroke="#000000" stroke-width="4" />
+          <polygon points="428,52 444,60 428,68" fill="#000000" />
+          <rect x="452" y="20" width="370" height="80" rx="40" fill="#F59E0B" />
+          <text x="637" y="56" fill="#000000" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700"
+            text-anchor="middle" letter-spacing="2">02 · MODEL</text>
+          <text x="637" y="82" fill="#000000" font-family="Inter, sans-serif" font-size="22" font-weight="800"
+            text-anchor="middle">ORM Agent</text>
+          <line x1="830" y1="60" x2="880" y2="60" stroke="#000000" stroke-width="4" />
+          <polygon points="880,52 896,60 880,68" fill="#000000" />
+          <rect x="904" y="20" width="370" height="80" rx="40" fill="#EF4444" />
+          <text x="1089" y="56" fill="#ffffff" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700"
+            text-anchor="middle" letter-spacing="2">03 · ROUTES</text>
+          <text x="1089" y="82" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="800"
+            text-anchor="middle">API Agent</text>
+          <line x1="1282" y1="60" x2="1332" y2="60" stroke="#000000" stroke-width="4" />
+          <polygon points="1332,52 1348,60 1332,68" fill="#000000" />
+          <rect x="1356" y="20" width="324" height="80" rx="40" fill="#000000" />
+          <text x="1518" y="56" fill="#F59E0B" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700"
+            text-anchor="middle" letter-spacing="2">04 · REACT</text>
+          <text x="1518" y="82" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="800"
+            text-anchor="middle">Frontend Agent</text>
+        </svg>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:990px;width:900px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#000000;letter-spacing:2px;">
+          OPENAI &nbsp;×&nbsp; OUTSKILL &nbsp;BUILDER &nbsp;HACKATHON &nbsp;2025
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1280px;top:990px;width:520px;text-align:right;z-index:10;">
+        <div style="font-size:16px;font-weight:600;color:#000000;">
+          Built by <span style="font-weight:800;">Harsh Kawatra</span>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:0;top:1072px;width:1920px;height:8px;background:#000000;z-index:1;"></div>
+    </div>
+  </div>
+
+  <!-- ======================= SLIDE 02 — PROBLEM ======================= -->
+  <div class="slide-wrapper">
+    <div class="slide-container" data-screen-label="02 Problem"
+      style="position:relative;width:1920px;height:1080px;overflow:hidden;background:#ffffff;">
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:80px;width:600px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#EF4444;letter-spacing:3px;">
+          ▍ 02 &nbsp;·&nbsp; THE PROBLEM</div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:148px;width:80px;height:6px;background:#EF4444;z-index:1;"></div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:180px;width:1280px;z-index:10;">
+        <div style="font-size:88px;font-weight:900;line-height:0.98;letter-spacing:-3px;color:#000000;">
+          Adding one feature<br>breaks <span style="color:#EF4444;">four things</span> at once.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:432px;width:1080px;z-index:10;">
+        <div style="font-size:22px;font-weight:500;line-height:1.55;color:#000000;">
+          Every time a developer ships a new feature in a production codebase, they manually update four separate layers
+          — the
+          <b>database schema</b>, the <b>ORM model</b>, the <b>API routes</b>, and the <b>UI component</b>. These layers
+          are
+          tightly coupled, but live in different languages, paradigms, and files. Miss one, the feature breaks. Update
+          them
+          in the wrong order, the build fails.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:680px;width:560px;height:200px;background:#ffffff;border:3px solid #EF4444;z-index:5;">
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:152px;top:704px;width:496px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EF4444;letter-spacing:2px;">
+          PAIN&nbsp;·&nbsp;01</div>
+        <div style="font-size:28px;font-weight:800;line-height:1.25;color:#000000;margin-top:14px;">
+          4 layers touched per feature — manually, every time.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:700px;top:680px;width:560px;height:200px;background:#ffffff;border:3px solid #EF4444;z-index:5;">
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:732px;top:704px;width:496px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EF4444;letter-spacing:2px;">
+          PAIN&nbsp;·&nbsp;02</div>
+        <div style="font-size:28px;font-weight:800;line-height:1.25;color:#000000;margin-top:14px;">
+          Each layer has no awareness of what the others generated.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:1280px;top:680px;width:520px;height:200px;background:#ffffff;border:3px solid #EF4444;z-index:5;">
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1312px;top:704px;width:456px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EF4444;letter-spacing:2px;">
+          PAIN&nbsp;·&nbsp;03</div>
+        <div style="font-size:28px;font-weight:800;line-height:1.25;color:#000000;margin-top:14px;">
+          One wrong column name cascades across the entire stack.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:1320px;top:170px;width:480px;height:480px;z-index:5;">
+        <svg width="480" height="480" viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <rect x="40" y="10" width="400" height="78" fill="#ffffff" stroke="#000000" stroke-width="3" />
+          <text x="60" y="44" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" fill="#000000"
+            letter-spacing="2">LAYER 01</text>
+          <text x="60" y="74" font-family="Inter, sans-serif" font-size="26" font-weight="800" fill="#000000">Database /
+            SQL</text>
+          <line x1="240" y1="90" x2="220" y2="118" stroke="#EF4444" stroke-width="5" />
+          <line x1="240" y1="90" x2="262" y2="115" stroke="#EF4444" stroke-width="5" />
+          <text x="290" y="112" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700"
+            fill="#EF4444">✕ BROKEN LINK</text>
+          <rect x="40" y="128" width="400" height="78" fill="#ffffff" stroke="#000000" stroke-width="3" />
+          <text x="60" y="162" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" fill="#000000"
+            letter-spacing="2">LAYER 02</text>
+          <text x="60" y="192" font-family="Inter, sans-serif" font-size="26" font-weight="800" fill="#000000">ORM /
+            Model</text>
+          <line x1="240" y1="208" x2="218" y2="234" stroke="#EF4444" stroke-width="5" />
+          <line x1="240" y1="208" x2="264" y2="232" stroke="#EF4444" stroke-width="5" />
+          <text x="290" y="230" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700"
+            fill="#EF4444">✕ BROKEN LINK</text>
+          <rect x="40" y="246" width="400" height="78" fill="#ffffff" stroke="#000000" stroke-width="3" />
+          <text x="60" y="280" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" fill="#000000"
+            letter-spacing="2">LAYER 03</text>
+          <text x="60" y="310" font-family="Inter, sans-serif" font-size="26" font-weight="800" fill="#000000">API /
+            Routes</text>
+          <line x1="240" y1="326" x2="218" y2="352" stroke="#EF4444" stroke-width="5" />
+          <line x1="240" y1="326" x2="264" y2="350" stroke="#EF4444" stroke-width="5" />
+          <text x="290" y="348" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700"
+            fill="#EF4444">✕ BROKEN LINK</text>
+          <rect x="40" y="364" width="400" height="78" fill="#ffffff" stroke="#000000" stroke-width="3" />
+          <text x="60" y="398" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" fill="#000000"
+            letter-spacing="2">LAYER 04</text>
+          <text x="60" y="428" font-family="Inter, sans-serif" font-size="26" font-weight="800" fill="#000000">UI /
+            Component</text>
+        </svg>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:930px;width:14px;height:80px;background:#EF4444;z-index:5;"></div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:158px;top:940px;width:1640px;z-index:10;">
+        <div style="font-size:34px;font-weight:900;line-height:1.2;color:#000000;letter-spacing:-0.5px;">
+          The cost of a single missed layer is a broken production build.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= SLIDE 03 — SOLUTION ======================= -->
+  <div class="slide-wrapper">
+    <div class="slide-container" data-screen-label="03 Solution"
+      style="position:relative;width:1920px;height:1080px;overflow:hidden;background:#ffffff;">
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:64px;width:800px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#16A34A;letter-spacing:3px;">
+          ▍ 03 &nbsp;·&nbsp; THE SOLUTION &amp; USER JOURNEY</div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:124px;width:80px;height:6px;background:#16A34A;z-index:1;"></div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:156px;width:1680px;z-index:10;">
+        <div style="font-size:76px;font-weight:900;line-height:0.98;letter-spacing:-2.5px;color:#000000;">
+          One sentence. Four specialist agents.<br>
+          <span style="color:#16A34A;">A working feature.</span>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:368px;width:1680px;z-index:10;">
+        <div style="font-size:22px;font-weight:500;line-height:1.5;color:#000000;">
+          Workbench Studio v1.2 deploys a coordinated four-agent pipeline — <b>one agent per layer</b>, each an expert
+          in its own domain.
+          Each agent passes its output as context to the next, creating a chain where every layer knows exactly what was
+          built above it.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:496px;width:1680px;height:296px;z-index:5;">
+        <svg width="1680" height="296" viewBox="0 0 1680 296" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <line x1="60" y1="80" x2="1620" y2="80" stroke="#000000" stroke-width="2" stroke-dasharray="2,6" />
+          <circle cx="100" cy="80" r="36" fill="#16A34A" />
+          <text x="100" y="89" fill="#ffffff" font-family="Inter, sans-serif" font-size="30" font-weight="900"
+            text-anchor="middle">1</text>
+          <text x="100" y="156" fill="#16A34A" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700"
+            text-anchor="middle" letter-spacing="2">PROMPT</text>
+          <foreignObject x="0" y="170" width="220" height="120">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="font-family:Inter,sans-serif;font-size:15px;font-weight:600;line-height:1.35;color:#000000;text-align:center;">
+              Developer types<br>"Add ratings &amp; reviews"</div>
+          </foreignObject>
+          <circle cx="350" cy="80" r="36" fill="#F59E0B" />
+          <text x="350" y="89" fill="#000000" font-family="Inter, sans-serif" font-size="30" font-weight="900"
+            text-anchor="middle">2</text>
+          <text x="350" y="156" fill="#F59E0B" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700"
+            text-anchor="middle" letter-spacing="2">DATABASE</text>
+          <foreignObject x="250" y="170" width="220" height="120">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="font-family:Inter,sans-serif;font-size:15px;font-weight:600;line-height:1.35;color:#000000;text-align:center;">
+              Database Agent generates<br>the SQL migration</div>
+          </foreignObject>
+          <circle cx="610" cy="80" r="36" fill="#F59E0B" />
+          <text x="610" y="89" fill="#000000" font-family="Inter, sans-serif" font-size="30" font-weight="900"
+            text-anchor="middle">3</text>
+          <text x="610" y="156" fill="#F59E0B" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700"
+            text-anchor="middle" letter-spacing="2">ORM</text>
+          <foreignObject x="510" y="170" width="220" height="120">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="font-family:Inter,sans-serif;font-size:15px;font-weight:600;line-height:1.35;color:#000000;text-align:center;">
+              ORM Agent reads migration,<br>writes the model</div>
+          </foreignObject>
+          <circle cx="870" cy="80" r="36" fill="#F59E0B" />
+          <text x="870" y="89" fill="#000000" font-family="Inter, sans-serif" font-size="30" font-weight="900"
+            text-anchor="middle">4</text>
+          <text x="870" y="156" fill="#F59E0B" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700"
+            text-anchor="middle" letter-spacing="2">API</text>
+          <foreignObject x="770" y="170" width="220" height="120">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="font-family:Inter,sans-serif;font-size:15px;font-weight:600;line-height:1.35;color:#000000;text-align:center;">
+              API Agent reads model,<br>writes Express routes</div>
+          </foreignObject>
+          <circle cx="1130" cy="80" r="36" fill="#F59E0B" />
+          <text x="1130" y="89" fill="#000000" font-family="Inter, sans-serif" font-size="30" font-weight="900"
+            text-anchor="middle">5</text>
+          <text x="1130" y="156" fill="#F59E0B" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700"
+            text-anchor="middle" letter-spacing="2">FRONTEND</text>
+          <foreignObject x="1030" y="170" width="220" height="120">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="font-family:Inter,sans-serif;font-size:15px;font-weight:600;line-height:1.35;color:#000000;text-align:center;">
+              Frontend Agent reads routes,<br>writes React component</div>
+          </foreignObject>
+          <circle cx="1410" cy="80" r="44" fill="#16A34A" />
+          <text x="1410" y="91" fill="#ffffff" font-family="Inter, sans-serif" font-size="32" font-weight="900"
+            text-anchor="middle">6</text>
+          <text x="1410" y="160" fill="#16A34A" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700"
+            text-anchor="middle" letter-spacing="2">APPLY SLICE</text>
+          <foreignObject x="1290" y="174" width="240" height="120">
+            <div xmlns="http://www.w3.org/1999/xhtml"
+              style="font-family:Inter,sans-serif;font-size:15px;font-weight:700;line-height:1.35;color:#000000;text-align:center;">
+              Live feature appears<br>in the sandbox app</div>
+          </foreignObject>
+          <polygon points="1620,73 1640,80 1620,87" fill="#16A34A" />
+        </svg>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:836px;width:1680px;height:184px;background:#F8FAFC;border:3px solid #16A34A;z-index:5;">
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:160px;top:858px;width:300px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#16A34A;letter-spacing:3px;">
+          ▍ THE DIFFERENTIATOR</div>
+        <div style="font-size:54px;font-weight:900;line-height:1;color:#16A34A;margin-top:14px;letter-spacing:-1px;">
+          CHAIN<br>OF&nbsp;CONTEXT</div>
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:540px;top:874px;width:1240px;z-index:10;">
+        <div style="font-size:30px;font-weight:700;line-height:1.32;color:#000000;letter-spacing:-0.3px;">
+          Each agent sees the <span style="background:#F59E0B;padding:2px 8px;">exact code</span> its upstream agent
+          produced.
+        </div>
+        <div style="font-size:24px;font-weight:500;line-height:1.4;color:#000000;margin-top:14px;">
+          No guessing. No hallucinated column names. No wrong function calls.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:1040px;width:1680px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#000000;letter-spacing:2px;display:flex;justify-content:space-between;">
+          <span>WORKBENCH STUDIO · v1.2</span>
+          <span>03 / 06</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= SLIDE 04 — TECH STACK ======================= -->
+  <div class="slide-wrapper">
+    <div class="slide-container" data-screen-label="04 Tech Stack"
+      style="position:relative;width:1920px;height:1080px;overflow:hidden;background:#ffffff;">
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:64px;width:700px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#000000;letter-spacing:3px;">
+          ▍ 04 &nbsp;·&nbsp; TOOLS &amp; TECH STACK</div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:124px;width:80px;height:6px;background:#000000;z-index:1;"></div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:156px;width:1680px;z-index:10;">
+        <div style="font-size:76px;font-weight:900;line-height:0.98;letter-spacing:-2.5px;color:#000000;">
+          Built on a precise,<br>purpose-chosen stack.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:392px;width:8px;height:64px;background:#16A34A;z-index:5;"></div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:148px;top:392px;width:800px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#16A34A;letter-spacing:3px;">
+          COLUMN&nbsp;A</div>
+        <div style="font-size:30px;font-weight:900;color:#000000;margin-top:6px;letter-spacing:-0.5px;">AI &amp; Backend
+          Layer</div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:486px;width:830px;z-index:10;">
+        <div style="font-size:18px;line-height:1.5;color:#000000;">
+          <div style="display:flex;align-items:flex-start;gap:18px;padding:14px 0;border-bottom:1px solid #000000;">
+            <div
+              style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#16A34A;letter-spacing:2px;min-width:42px;padding-top:4px;">
+              01</div>
+            <div>
+              <div style="font-size:22px;font-weight:900;color:#000000;">AI Engine — OpenAI Codex CLI</div>
+              <div style="font-size:17px;font-weight:500;color:#000000;margin-top:4px;">Spawned as four independent
+                child processes, one per agent layer.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:18px;padding:14px 0;border-bottom:1px solid #000000;">
+            <div
+              style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#16A34A;letter-spacing:2px;min-width:42px;padding-top:4px;">
+              02</div>
+            <div>
+              <div style="font-size:22px;font-weight:900;color:#000000;">Agent Backend — Node.js 20 + Express 4</div>
+              <div style="font-size:17px;font-weight:500;color:#000000;margin-top:4px;">Orchestrates the pipeline;
+                streams events via SSE.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:18px;padding:14px 0;border-bottom:1px solid #000000;">
+            <div
+              style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#16A34A;letter-spacing:2px;min-width:42px;padding-top:4px;">
+              03</div>
+            <div>
+              <div style="font-size:22px;font-weight:900;color:#000000;">Database — better-sqlite3</div>
+              <div style="font-size:17px;font-weight:500;color:#000000;margin-top:4px;">Synchronous, file-based, zero
+                setup.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:18px;padding:14px 0;">
+            <div
+              style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#16A34A;letter-spacing:2px;min-width:42px;padding-top:4px;">
+              04</div>
+            <div>
+              <div style="font-size:22px;font-weight:900;color:#000000;">Real-time — Server-Sent Events</div>
+              <div style="font-size:17px;font-weight:500;color:#000000;margin-top:4px;">Native browser EventSource — no
+                Socket.io overhead.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:960px;top:392px;width:2px;height:436px;background:#000000;z-index:1;"></div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:1000px;top:392px;width:8px;height:64px;background:#EF4444;z-index:5;"></div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1028px;top:392px;width:800px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EF4444;letter-spacing:3px;">
+          COLUMN&nbsp;B</div>
+        <div style="font-size:30px;font-weight:900;color:#000000;margin-top:6px;letter-spacing:-0.5px;">Frontend &amp;
+          Tooling Layer</div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1000px;top:486px;width:800px;z-index:10;">
+        <div style="font-size:18px;line-height:1.5;color:#000000;">
+          <div style="display:flex;align-items:flex-start;gap:18px;padding:14px 0;border-bottom:1px solid #000000;">
+            <div
+              style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#EF4444;letter-spacing:2px;min-width:42px;padding-top:4px;">
+              01</div>
+            <div>
+              <div style="font-size:22px;font-weight:900;color:#000000;">Studio UI — React 18 + Vite 5</div>
+              <div style="font-size:17px;font-weight:500;color:#000000;margin-top:4px;">Single-page app with fast hot
+                module replacement.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:18px;padding:14px 0;border-bottom:1px solid #000000;">
+            <div
+              style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#EF4444;letter-spacing:2px;min-width:42px;padding-top:4px;">
+              02</div>
+            <div>
+              <div style="font-size:22px;font-weight:900;color:#000000;">Code Display — Monaco Editor</div>
+              <div style="font-size:17px;font-weight:500;color:#000000;margin-top:4px;">VS Code-quality diff viewer with
+                before / after views.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:18px;padding:14px 0;border-bottom:1px solid #000000;">
+            <div
+              style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#EF4444;letter-spacing:2px;min-width:42px;padding-top:4px;">
+              03</div>
+            <div>
+              <div style="font-size:22px;font-weight:900;color:#000000;">Styling — TailwindCSS 3</div>
+              <div style="font-size:17px;font-weight:500;color:#000000;margin-top:4px;">Utility-first dark studio
+                interface.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:18px;padding:14px 0;">
+            <div
+              style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#EF4444;letter-spacing:2px;min-width:42px;padding-top:4px;">
+              04</div>
+            <div>
+              <div style="font-size:22px;font-weight:900;color:#000000;">Multi-process — concurrently + nodemon</div>
+              <div style="font-size:17px;font-weight:500;color:#000000;margin-top:4px;">One command starts all four
+                servers.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:870px;width:1680px;height:148px;background:#ffffff;border:3px solid #F59E0B;z-index:5;">
+      </div>
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:870px;width:200px;height:148px;background:#F59E0B;z-index:6;"></div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:138px;top:890px;width:170px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#000000;letter-spacing:2px;">
+          ARCHITECTURE</div>
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#000000;letter-spacing:2px;">
+          NOTE</div>
+        <div style="font-size:62px;font-weight:900;line-height:1;color:#000000;margin-top:6px;">!</div>
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:344px;top:888px;width:1444px;z-index:10;">
+        <div style="font-size:22px;font-weight:600;line-height:1.4;color:#000000;">
+          The multi-agent architecture is <b>not cosmetic.</b> Each of the four Codex CLI processes runs independently,
+          reads the sandbox codebase, and produces exactly one file. Downstream agents receive upstream output as
+          <b>inline context</b> — not a file reference.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:1040px;width:1680px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#000000;letter-spacing:2px;display:flex;justify-content:space-between;">
+          <span>WORKBENCH STUDIO · v1.2</span>
+          <span>04 / 06</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= SLIDE 05 — AUDIENCE + FUTURE SCOPE ======================= -->
+  <div class="slide-wrapper">
+    <div class="slide-container" data-screen-label="05 Audience + Future"
+      style="position:relative;width:1920px;height:1080px;overflow:hidden;background:#ffffff;">
+
+      <!-- Section tag -->
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:64px;width:700px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#000000;letter-spacing:3px;">
+          ▍ 05 &nbsp;·&nbsp; TARGET AUDIENCE &amp; FUTURE SCOPE</div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:124px;width:80px;height:6px;background:#000000;z-index:1;"></div>
+
+      <!-- Headline -->
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:148px;width:1680px;z-index:10;">
+        <div style="font-size:68px;font-weight:900;line-height:0.98;letter-spacing:-2.5px;color:#000000;">
+          Built for developers who<br>build products <span style="color:#F59E0B;">fast.</span>
+        </div>
+      </div>
+
+      <!-- Card 1 — green (compacted) -->
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:370px;width:560px;height:340px;background:#ffffff;border:3px solid #16A34A;z-index:5;">
+      </div>
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:370px;width:560px;height:72px;background:#16A34A;z-index:6;"></div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:152px;top:382px;width:496px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#ffffff;letter-spacing:3px;">
+          SEGMENT&nbsp;·&nbsp;01</div>
+        <div style="font-size:20px;font-weight:900;color:#ffffff;margin-top:2px;letter-spacing:-0.3px;">For shipping
+          alone</div>
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:152px;top:462px;width:496px;z-index:10;">
+        <div style="font-size:28px;font-weight:900;line-height:1.1;color:#000000;letter-spacing:-0.8px;">
+          Solo Developers &amp;<br>Indie Hackers
+        </div>
+        <div style="font-size:16px;font-weight:500;line-height:1.45;color:#000000;margin-top:14px;">
+          Building SaaS products alone. Every feature request means touching four files manually.
+          Workbench Studio compresses <b>hours of boilerplate</b> into <b>seconds</b>.
+        </div>
+        <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span
+            style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#16A34A;border:2px solid #16A34A;padding:4px 8px;letter-spacing:1.5px;">SOLO</span>
+          <span
+            style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#16A34A;border:2px solid #16A34A;padding:4px 8px;letter-spacing:1.5px;">SAAS</span>
+          <span
+            style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#16A34A;border:2px solid #16A34A;padding:4px 8px;letter-spacing:1.5px;">SPEED</span>
+        </div>
+      </div>
+
+      <!-- Card 2 — yellow (compacted) -->
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:704px;top:370px;width:560px;height:340px;background:#ffffff;border:3px solid #F59E0B;z-index:5;">
+      </div>
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:704px;top:370px;width:560px;height:72px;background:#F59E0B;z-index:6;"></div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:736px;top:382px;width:496px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#000000;letter-spacing:3px;">
+          SEGMENT&nbsp;·&nbsp;02</div>
+        <div style="font-size:20px;font-weight:900;color:#000000;margin-top:2px;letter-spacing:-0.3px;">For racing the
+          clock</div>
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:736px;top:462px;width:496px;z-index:10;">
+        <div style="font-size:28px;font-weight:900;line-height:1.1;color:#000000;letter-spacing:-0.8px;">
+          Hackathon<br>Participants
+        </div>
+        <div style="font-size:16px;font-weight:500;line-height:1.45;color:#000000;margin-top:14px;">
+          Time is the constraint. Spinning up new features during a hackathon means schema, model, routes, and
+          UI stubs — all before the demo. Workbench Studio handles the <b>scaffolding</b>.
+        </div>
+        <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span
+            style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#000000;border:2px solid #F59E0B;padding:4px 8px;letter-spacing:1.5px;">48-HOUR</span>
+          <span
+            style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#000000;border:2px solid #F59E0B;padding:4px 8px;letter-spacing:1.5px;">DEMOS</span>
+          <span
+            style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#000000;border:2px solid #F59E0B;padding:4px 8px;letter-spacing:1.5px;">MVP</span>
+        </div>
+      </div>
+
+      <!-- Card 3 — red (compacted) -->
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:1288px;top:370px;width:512px;height:340px;background:#ffffff;border:3px solid #EF4444;z-index:5;">
+      </div>
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:1288px;top:370px;width:512px;height:72px;background:#EF4444;z-index:6;"></div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1320px;top:382px;width:448px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#ffffff;letter-spacing:3px;">
+          SEGMENT&nbsp;·&nbsp;03</div>
+        <div style="font-size:20px;font-weight:900;color:#ffffff;margin-top:2px;letter-spacing:-0.3px;">For scaling a
+          team</div>
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1320px;top:462px;width:448px;z-index:10;">
+        <div style="font-size:28px;font-weight:900;line-height:1.1;color:#000000;letter-spacing:-0.8px;">
+          Early-Stage<br>Engineering Teams
+        </div>
+        <div style="font-size:16px;font-weight:500;line-height:1.45;color:#000000;margin-top:14px;">
+          Small teams adding features to a growing codebase. Onboarding is slow, context is scattered.
+          Workbench Studio <b>externalizes institutional knowledge</b> about how the stack fits together.
+        </div>
+        <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span
+            style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#EF4444;border:2px solid #EF4444;padding:4px 8px;letter-spacing:1.5px;">STARTUPS</span>
+          <span
+            style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#EF4444;border:2px solid #EF4444;padding:4px 8px;letter-spacing:1.5px;">ONBOARD</span>
+        </div>
+      </div>
+
+      <!-- ─── FUTURE SCOPE SECTION ─── -->
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:746px;width:1680px;height:272px;background:#ffffff;border:3px solid #000000;z-index:5;">
+      </div>
+
+      <!-- Future scope header stripe -->
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:120px;top:746px;width:1680px;height:56px;background:#000000;z-index:6;"></div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:152px;top:758px;width:600px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#F59E0B;letter-spacing:3px;">
+          ▍ FUTURE SCOPE</div>
+      </div>
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1340px;top:756px;width:440px;text-align:right;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:#ffffff;letter-spacing:2px;">
+          SANDBOX TODAY → ANY CODEBASE TOMORROW</div>
+      </div>
+
+      <!-- Three future-scope bullets -->
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:152px;top:822px;width:520px;z-index:10;">
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="font-size:26px;line-height:1;flex-shrink:0;margin-top:2px;">🔗</div>
+          <div>
+            <div style="font-size:22px;font-weight:900;color:#000000;line-height:1.2;">Connect to any codebase</div>
+            <div style="font-size:15px;font-weight:500;color:#000000;margin-top:4px;line-height:1.4;">Local folders
+              &amp; GitHub repos — not just the sandbox.</div>
+          </div>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:700px;top:822px;width:520px;z-index:10;">
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="font-size:26px;line-height:1;flex-shrink:0;margin-top:2px;">🗂️</div>
+          <div>
+            <div style="font-size:22px;font-weight:900;color:#000000;line-height:1.2;">Manual layer mapping</div>
+            <div style="font-size:15px;font-weight:500;color:#000000;margin-top:4px;line-height:1.4;">Users assign which
+              directories each agent can read &amp; write.</div>
+          </div>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1248px;top:822px;width:520px;z-index:10;">
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="font-size:26px;line-height:1;flex-shrink:0;margin-top:2px;">🔒</div>
+          <div>
+            <div style="font-size:22px;font-weight:900;color:#000000;line-height:1.2;">Per-agent access control</div>
+            <div style="font-size:15px;font-weight:500;color:#000000;margin-top:4px;line-height:1.4;">Explicit, enforced
+              permissions — agents never touch the wrong files.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Closing line -->
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:152px;top:940px;width:1616px;z-index:10;">
+        <div style="font-size:20px;font-weight:700;line-height:1.3;color:#000000;letter-spacing:-0.3px;">
+          The four-agent architecture is already built for this — going production is an <span
+            style="background:#F59E0B;padding:2px 8px;">infrastructure change</span>, not an architectural one.
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:1044px;width:1680px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#000000;letter-spacing:2px;display:flex;justify-content:space-between;">
+          <span>WORKBENCH STUDIO · v1.2</span>
+          <span>05 / 06</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= SLIDE 06 — THANK YOU ======================= -->
+  <div class="slide-wrapper">
+    <div class="slide-container" data-screen-label="06 Thank You"
+      style="position:relative;width:1920px;height:1080px;overflow:hidden;background:#ffffff;">
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:0;top:0;width:1920px;height:8px;background:#000000;z-index:1;"></div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:0;top:140px;width:1920px;text-align:center;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#000000;letter-spacing:6px;">
+          ▍ END&nbsp;OF&nbsp;PITCH&nbsp;·&nbsp;06 / 06 ▍</div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:0;top:240px;width:1920px;text-align:center;z-index:10;">
+        <div style="font-size:340px;font-weight:900;line-height:0.92;letter-spacing:-12px;color:#000000;">Thank You.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:0;top:608px;width:1920px;text-align:center;z-index:10;">
+        <div style="font-size:34px;font-weight:600;color:#000000;letter-spacing:-0.5px;">
+          Workbench Studio v1.2 — <span style="font-weight:800;">Natural Language Schema Migration</span>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:160px;top:700px;width:1600px;height:120px;z-index:5;">
+        <svg width="1600" height="120" viewBox="0 0 1600 120" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <rect x="0" y="20" width="370" height="80" rx="40" fill="#16A34A" />
+          <text x="185" y="56" fill="#ffffff" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700"
+            text-anchor="middle" letter-spacing="2">01 · SQL</text>
+          <text x="185" y="82" fill="#ffffff" font-family="Inter, sans-serif" font-size="24" font-weight="800"
+            text-anchor="middle">Database Agent</text>
+          <text x="392" y="70" fill="#000000" font-family="Inter, sans-serif" font-size="40" font-weight="900"
+            text-anchor="middle">·</text>
+          <rect x="410" y="20" width="370" height="80" rx="40" fill="#F59E0B" />
+          <text x="595" y="56" fill="#000000" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700"
+            text-anchor="middle" letter-spacing="2">02 · MODEL</text>
+          <text x="595" y="82" fill="#000000" font-family="Inter, sans-serif" font-size="24" font-weight="800"
+            text-anchor="middle">ORM Agent</text>
+          <text x="802" y="70" fill="#000000" font-family="Inter, sans-serif" font-size="40" font-weight="900"
+            text-anchor="middle">·</text>
+          <rect x="820" y="20" width="370" height="80" rx="40" fill="#EF4444" />
+          <text x="1005" y="56" fill="#ffffff" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700"
+            text-anchor="middle" letter-spacing="2">03 · ROUTES</text>
+          <text x="1005" y="82" fill="#ffffff" font-family="Inter, sans-serif" font-size="24" font-weight="800"
+            text-anchor="middle">API Agent</text>
+          <text x="1212" y="70" fill="#000000" font-family="Inter, sans-serif" font-size="40" font-weight="900"
+            text-anchor="middle">·</text>
+          <rect x="1230" y="20" width="370" height="80" rx="40" fill="#000000" />
+          <text x="1415" y="56" fill="#F59E0B" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700"
+            text-anchor="middle" letter-spacing="2">04 · REACT</text>
+          <text x="1415" y="82" fill="#ffffff" font-family="Inter, sans-serif" font-size="24" font-weight="800"
+            text-anchor="middle">Frontend Agent</text>
+        </svg>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:0;top:856px;width:1920px;text-align:center;z-index:10;">
+        <div style="font-size:42px;font-weight:900;color:#000000;letter-spacing:-0.8px;">
+          One sentence. <span style="color:#16A34A;">Four agents.</span> A working feature.
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:120px;top:1000px;width:900px;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#000000;letter-spacing:2px;">
+          ▍ BUILT BY</div>
+        <div style="font-size:20px;font-weight:700;color:#000000;margin-top:4px;">
+          Harsh Kawatra <span style="font-weight:500;">— Student at Delhi Technological University</span>
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="textbox"
+        style="position:absolute;left:1020px;top:1000px;width:780px;text-align:right;z-index:10;">
+        <div
+          style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#000000;letter-spacing:2px;">
+          ▍ HACKATHON</div>
+        <div style="font-size:20px;font-weight:700;color:#000000;margin-top:4px;">
+          OpenAI &nbsp;×&nbsp; Outskill Builder Hackathon 2025
+        </div>
+      </div>
+
+      <div data-object="true" data-object-type="shape"
+        style="position:absolute;left:0;top:1072px;width:1920px;height:8px;background:#000000;z-index:1;"></div>
+    </div>
+  </div>
+
+  <script>
+    function resizeSlides() {
+      const slideW = 1920;
+      const slideH = 1080;
+
+      // Fit within viewport with 60px padding
+      const padding = 60;
+      const winW = window.innerWidth - padding;
+      const winH = window.innerHeight - padding;
+
+      let scale = Math.min(winW / slideW, winH / slideH);
+
+      if (scale > 1) scale = 1;
+      if (scale < 0.1) scale = 0.1;
+
+      document.documentElement.style.setProperty('--scale', scale);
+      document.documentElement.style.setProperty('--slide-w', (slideW * scale) + 'px');
+      document.documentElement.style.setProperty('--slide-h', (slideH * scale) + 'px');
+    }
+
+    window.addEventListener('resize', resizeSlides);
+    window.addEventListener('DOMContentLoaded', resizeSlides);
+    resizeSlides();
+  </script>
+</body>
+
+</html>

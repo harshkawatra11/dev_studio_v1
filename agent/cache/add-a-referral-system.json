@@ -1,0 +1,30 @@
+{
+  "feature": "Add a referral system",
+  "generatedAt": "2025-05-26T00:00:00.000Z",
+  "changes": {
+    "add-a-referral-system.migration.sql": {
+      "original": "",
+      "generated": "CREATE TABLE IF NOT EXISTS referrals (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n  referrer_id INTEGER NOT NULL REFERENCES users(id),\n  referred_id INTEGER REFERENCES users(id),\n  code TEXT UNIQUE NOT NULL,\n  credit REAL DEFAULT 15.00,\n  redeemed INTEGER DEFAULT 0,\n  created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n);",
+      "isNew": true,
+      "language": "sql"
+    },
+    "add-a-referral-system.model.js": {
+      "original": "",
+      "generated": "const db = require('./db');\nconst crypto = require('crypto');\n\nfunction generateCode() {\n  return crypto.randomBytes(4).toString('hex').toUpperCase();\n}\n\nfunction createReferral(referrerId) {\n  const code   = generateCode();\n  const result = db.prepare(\n    'INSERT INTO referrals (referrer_id, code) VALUES (?, ?)'\n  ).run(referrerId, code);\n  return { id: result.lastInsertRowid, code };\n}\n\nfunction getReferralByCode(code) {\n  return db.prepare('SELECT * FROM referrals WHERE code = ?').get(code);\n}\n\nfunction getReferralsByUser(userId) {\n  return db.prepare('SELECT * FROM referrals WHERE referrer_id = ?').all(userId);\n}\n\nfunction redeemReferral(code, referredId) {\n  const referral = getReferralByCode(code);\n  if (!referral || referral.redeemed) return null;\n  db.prepare('UPDATE referrals SET redeemed = 1, referred_id = ? WHERE code = ?').run(referredId, code);\n  return { credit: referral.credit };\n}\n\nmodule.exports = { createReferral, getReferralByCode, getReferralsByUser, redeemReferral };",
+      "isNew": true,
+      "language": "javascript"
+    },
+    "add-a-referral-system.routes.js": {
+      "original": "",
+      "generated": "const router = require('express').Router();\nconst model  = require('./add-a-referral-system.model');\n\nrouter.post('/generate', (req, res) => {\n  try {\n    const { user_id } = req.body;\n    if (!user_id) return res.status(400).json({ error: 'user_id is required' });\n    const result = model.createReferral(user_id);\n    res.status(201).json(result);\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n});\n\nrouter.post('/redeem', (req, res) => {\n  try {\n    const { code, user_id } = req.body;\n    if (!code || !user_id) return res.status(400).json({ error: 'code and user_id are required' });\n    const result = model.redeemReferral(code, user_id);\n    if (!result) return res.status(400).json({ error: 'Invalid or already redeemed code' });\n    res.json({ success: true, credit: result.credit });\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n});\n\nrouter.get('/user/:userId', (req, res) => {\n  try {\n    const referrals = model.getReferralsByUser(req.params.userId);\n    res.json(referrals);\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n});\n\nmodule.exports = router;",
+      "isNew": true,
+      "language": "javascript"
+    },
+    "add-a-referral-system.component.jsx": {
+      "original": "",
+      "generated": "import React, { useState, useEffect } from 'react';\n\nexport default function AddAReferralSystem() {\n  const [code, setCode]       = useState('');\n  const [redeem, setRedeem]   = useState('');\n  const [message, setMessage] = useState('');\n\n  async function generate() {\n    setMessage('');\n    try {\n      const res  = await fetch('http://localhost:5000/api/referrals/generate', {\n        method: 'POST', headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ user_id: 1 })\n      });\n      const data = await res.json();\n      setCode(data.code);\n    } catch { setMessage('Error generating code'); }\n  }\n\n  async function redeemCode() {\n    setMessage('');\n    try {\n      const res  = await fetch('http://localhost:5000/api/referrals/redeem', {\n        method: 'POST', headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ code: redeem, user_id: 2 })\n      });\n      const data = await res.json();\n      setMessage(data.success ? `$${data.credit.toFixed(2)} credit applied!` : data.error);\n    } catch { setMessage('Error redeeming code'); }\n  }\n\n  return (\n    <div style={{ fontFamily: 'sans-serif', padding: 20, background: '#0a0f1a', color: '#e2e8f0', minHeight: '100vh' }}>\n      <h2 style={{ marginBottom: 16, fontSize: 16, fontWeight: 700 }}>Referral System</h2>\n      <div style={{ marginBottom: 20 }}>\n        <button onClick={generate} style={{ padding: '6px 16px', background: '#00d4ff', color: '#000', border: 'none', borderRadius: 6, fontWeight: 700, cursor: 'pointer' }}>Generate Referral Code</button>\n        {code && <div style={{ marginTop: 10, fontSize: 18, fontWeight: 700, color: '#00d4ff', letterSpacing: '0.1em' }}>{code}</div>}\n      </div>\n      <div style={{ display: 'flex', gap: 8 }}>\n        <input value={redeem} onChange={e => setRedeem(e.target.value)} placeholder='Enter code to redeem'\n          style={{ padding: '6px 10px', background: '#111820', border: '1px solid #1e2d3d', borderRadius: 6, color: '#e2e8f0', flex: 1 }} />\n        <button onClick={redeemCode} style={{ padding: '6px 16px', background: '#7c3aed', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 700, cursor: 'pointer' }}>Redeem</button>\n      </div>\n      {message && <div style={{ marginTop: 12, fontSize: 13, color: '#10b981' }}>{message}</div>}\n    </div>\n  );\n}",
+      "isNew": true,
+      "language": "javascript"
+    }
+  }
+}
