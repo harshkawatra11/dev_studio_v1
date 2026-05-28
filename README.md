@@ -1,4 +1,4 @@
-# Workbench Studio v1.1
+# Workbench Studio v1.2
 
 Natural Language Schema Migration — OpenAI × Outskill Builder Hackathon
 

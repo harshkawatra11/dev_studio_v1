@@ -1,6 +1,6 @@
 {
   "name": "workbench-studio",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Natural Language Schema Migration tool — OpenAI x Outskill Hackathon",
   "scripts": {
     "dev":            "concurrently \"npm run sandbox\" \"npm run sandbox-client\" \"npm run agent\" \"npm run studio\"",

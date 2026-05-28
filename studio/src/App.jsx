@@ -164,7 +164,7 @@ function Header({ onReset, isRunning }) {
             color:         '#00d4ff',
             fontFamily:    "'JetBrains Mono', monospace",
             letterSpacing: '0.05em',
-          }}>v1.1 BETA</span>
+          }}>v1.2</span>
         </div>
         <AgentStatus />
       </div>
