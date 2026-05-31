@@ -3,14 +3,18 @@
   "version": "1.2.0",
   "description": "Natural Language Schema Migration tool — OpenAI x Outskill Hackathon",
   "scripts": {
-    "dev":            "concurrently \"npm run sandbox\" \"npm run sandbox-client\" \"npm run agent\" \"npm run studio\"",
-    "sandbox":        "cd sandbox && node server.js",
+    "dev": "concurrently \"npm run sandbox\" \"npm run sandbox-client\" \"npm run agent\" \"npm run studio\"",
+    "sandbox": "cd sandbox && node server.js",
     "sandbox-client": "cd sandbox/client && npm run dev",
-    "agent":          "cd agent && nodemon index.js",
-    "studio":         "cd studio && npm run dev"
+    "agent": "cd agent && nodemon index.js",
+    "studio": "cd studio && npm run dev",
+    "jobboard": "concurrently \"npm run jobboard:server\" \"npm run jobboard:client\"",
+    "jobboard:server": "cd app/server && npm run dev",
+    "jobboard:client": "cd app/client && npm run dev"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
-    "nodemon": "^3.0.0"
+    "nodemon": "^3.0.0",
+    "playwright": "^1.60.0"
   }
 }

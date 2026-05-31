@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  passwordHash  String
+  name          String
+  role          String        @default("CANDIDATE")
+  avatarUrl     String?
+  bio           String?
+  resumeUrl     String?
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  company       Company?
+  applications  Application[]
+  savedJobs     SavedJob[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  name        String
+  logoUrl     String?
+  website     String?
+  description String?
+  location    String?
+  industry    String?
+  size        String?
+  ownerId     String   @unique
+  owner       User     @relation(fields: [ownerId], references: [id])
+  jobs        Job[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Job {
+  id            String        @id @default(cuid())
+  title         String
+  description   String
+  location      String
+  type          String        @default("FULL_TIME")
+  salaryMin     Int?
+  salaryMax     Int?
+  currency      String        @default("USD")
+  experienceMin Int?
+  isActive      Boolean       @default(true)
+  closesAt      DateTime?
+  companyId     String
+  company       Company       @relation(fields: [companyId], references: [id])
+  tags          JobTag[]
+  applications  Application[]
+  savedBy       SavedJob[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model JobTag {
+  id    String @id @default(cuid())
+  name  String
+  jobId String
+  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, name])
+}
+
+model Application {
+  id          String    @id @default(cuid())
+  status      String    @default("APPLIED")
+  coverLetter String?
+  resumeUrl   String
+  note        String?
+  candidateId String
+  candidate   User      @relation(fields: [candidateId], references: [id])
+  jobId       String
+  job         Job       @relation(fields: [jobId], references: [id])
+  interview   Interview?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([candidateId, jobId])
+}
+
+model Interview {
+  id            String      @id @default(cuid())
+  applicationId String      @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  scheduledAt   DateTime
+  meetLink      String?
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model SavedJob {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+}
