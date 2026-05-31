@@ -1,15 +1,8 @@
 import { DiffEditor } from '@monaco-editor/react';
+import ErrorBoundary from './ErrorBoundary';
+import { AGENT_ORDER } from '../lib/agents';
 
-const LANG_MAP = {
-  sql:  'sql',
-  js:   'javascript',
-  jsx:  'javascript',
-  ts:   'typescript',
-  tsx:  'typescript',
-  json: 'json',
-  md:   'markdown',
-  html: 'html',
-};
+const LANG_MAP = { sql: 'sql', js: 'javascript', jsx: 'javascript', ts: 'typescript', tsx: 'typescript', json: 'json', md: 'markdown', html: 'html' };
 
 function getLanguage(filename) {
   const ext = filename.split('.').pop().toLowerCase();
@@ -22,14 +15,11 @@ function getFileIcon(filename) {
   return map[ext] || '📄';
 }
 
-// Agent-to-order mapping so tabs appear in pipeline order
-const AGENT_ORDER = { database: 0, model: 1, api: 2, frontend: 3 };
-
 function sortByAgent(files, changes) {
   return [...files].sort((a, b) => {
-    const orderA = AGENT_ORDER[changes[a]?.agentId] ?? 99;
-    const orderB = AGENT_ORDER[changes[b]?.agentId] ?? 99;
-    return orderA - orderB;
+    const oA = AGENT_ORDER[changes[a]?.agentId] ?? 99;
+    const oB = AGENT_ORDER[changes[b]?.agentId] ?? 99;
+    return oA - oB;
   });
 }
 
@@ -41,74 +31,56 @@ export default function DiffExplorer({ changes, activeFile, onSelectFile, onSele
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#000000' }}>
-      <div style={{
-        display:      'flex',
-        borderBottom: '1px solid #1e2d3d',
-        background:   '#0d1117',
-        overflowX:    'auto',
-        flexShrink:   0,
-      }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', borderBottom: '1px solid #1e2d3d', background: '#0d1117', overflowX: 'auto', flexShrink: 0 }}>
         {files.map((filename, idx) => {
           const change = changes[filename];
+          const active = activeFile === filename;
           return (
             <button
               key={filename}
               onClick={() => onSelectFile(filename)}
+              aria-label={`View diff for ${filename}`}
+              aria-selected={active}
+              role="tab"
               style={{
-                display:      'flex',
-                alignItems:   'center',
-                gap:          5,
-                padding:      '9px 14px',
-                background:   activeFile === filename ? '#000000' : 'transparent',
-                borderBottom: activeFile === filename ? `2px solid ${change.agentColor || '#7c3aed'}` : '2px solid transparent',
-                color:        activeFile === filename ? '#e2e8f0' : '#64748b',
-                fontSize:     11,
-                fontFamily:   "'JetBrains Mono', monospace",
-                whiteSpace:   'nowrap',
-                transition:   'color 0.15s',
-                borderRight:  '1px solid #1e2d3d',
-                animation:    'slideInTab 0.4s ease-out',
-                animationDelay: `${idx * 100}ms`,
-                animationFillMode: 'both',
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '9px 14px',
+                background: active ? '#000000' : 'transparent',
+                borderBottom: active ? `2px solid ${change.agentColor || '#7c3aed'}` : '2px solid transparent',
+                color: active ? '#e2e8f0' : '#64748b',
+                fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
+                whiteSpace: 'nowrap', transition: 'color 0.15s', borderRight: '1px solid #1e2d3d',
+                animation: 'slideInTab 0.4s ease-out',
+                animationDelay: `${idx * 100}ms`, animationFillMode: 'both',
               }}
-              onMouseEnter={e => { if (activeFile !== filename) e.currentTarget.style.color = '#94a3b8'; }}
-              onMouseLeave={e => { if (activeFile !== filename) e.currentTarget.style.color = '#64748b'; }}
+              onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#94a3b8'; }}
+              onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#64748b'; }}
             >
               <span>{getFileIcon(filename)}</span>
               <span>{filename}</span>
               {change.agentShortName && (
                 <span style={{
-                  fontSize:   9,
-                  padding:    '1px 5px',
+                  fontSize: 9, padding: '1px 5px',
                   background: `${change.agentColor || '#64748b'}14`,
-                  color:      change.agentColor || '#64748b',
-                  border:     `1px solid ${change.agentColor || '#64748b'}33`,
-                  borderRadius: 3,
-                  fontWeight: 700,
+                  color: change.agentColor || '#64748b',
+                  border: `1px solid ${change.agentColor || '#64748b'}33`,
+                  borderRadius: 3, fontWeight: 700,
                 }}>{change.agentShortName}</span>
               )}
               {change.isNew && (
-                <span style={{
-                  fontSize:   9,
-                  padding:    '1px 5px',
-                  background: 'rgba(16,185,129,0.1)',
-                  color:      '#10b981',
-                  border:     '1px solid rgba(16,185,129,0.2)',
-                  borderRadius: 3,
-                }}>NEW</span>
+                <span style={{ fontSize: 9, padding: '1px 5px', background: 'rgba(16,185,129,0.1)', color: '#10b981', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 3 }}>
+                  NEW
+                </span>
               )}
             </button>
           );
         })}
       </div>
 
+      {/* Diff header */}
       {current && (
-        <div style={{
-          display:      'flex',
-          background:   '#0a0f18',
-          borderBottom: '1px solid #1e2d3d',
-          flexShrink:   0,
-        }}>
+        <div style={{ display: 'flex', background: '#0a0f18', borderBottom: '1px solid #1e2d3d', flexShrink: 0 }}>
           <div style={{ flex: 1, padding: '5px 16px', fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: '#64748b', letterSpacing: '0.05em', borderRight: '1px solid #1e2d3d' }}>
             BASELINE {current.isNew ? '(new file)' : '(original)'}
           </div>
@@ -118,33 +90,29 @@ export default function DiffExplorer({ changes, activeFile, onSelectFile, onSele
         </div>
       )}
 
+      {/* Monaco diff editor wrapped in ErrorBoundary */}
       {current && (
-        <div style={{ flex: 1, overflow: 'hidden' }}>
-          <DiffEditor
-            height="100%"
-            language={getLanguage(activeFile)}
-            original={current.original}
-            modified={current.generated}
-            theme="vs-dark"
-            options={{
-              readOnly:             true,
-              renderSideBySide:     true,
-              minimap:              { enabled: false },
-              fontSize:             12,
-              lineNumbers:          'on',
-              scrollBeyondLastLine: false,
-              wordWrap:             'off',
-              diffWordWrap:         'off',
-              scrollbar:            { vertical: 'auto', horizontal: 'auto' },
-              renderLineHighlight:  'none',
-              contextmenu:          false,
-              folding:              false,
-              glyphMargin:          false,
-              lineDecorationsWidth: 0,
-              overviewRulerBorder:  false,
-            }}
-          />
-        </div>
+        <ErrorBoundary title="Diff editor failed to load">
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <DiffEditor
+              height="100%"
+              language={getLanguage(activeFile)}
+              original={current.original || ''}
+              modified={current.generated || ''}
+              theme="vs-dark"
+              options={{
+                readOnly: true, renderSideBySide: true,
+                minimap: { enabled: false }, fontSize: 12,
+                lineNumbers: 'on', scrollBeyondLastLine: false,
+                wordWrap: 'off', diffWordWrap: 'off',
+                scrollbar: { vertical: 'auto', horizontal: 'auto' },
+                renderLineHighlight: 'none', contextmenu: false,
+                folding: false, glyphMargin: false,
+                lineDecorationsWidth: 0, overviewRulerBorder: false,
+              }}
+            />
+          </div>
+        </ErrorBoundary>
       )}
     </div>
   );
@@ -158,90 +126,41 @@ function EmptyState({ onSelectIdea }) {
 
   return (
     <div style={{
-      flex:           1,
-      display:        'flex',
-      flexDirection:  'column',
-      alignItems:     'center',
-      justifyContent: 'center',
-      background:     '#000000',
-      gap:            20,
-      padding:        40,
+      flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      background: '#000000', gap: 20, padding: 40,
     }}>
       <div style={{ fontSize: 28, opacity: 0.4 }}>AGENTS</div>
-      <div style={{
-        fontFamily: "'Syne', sans-serif",
-        fontWeight: 700,
-        fontSize:   14,
-        color:      '#1e2d3d',
-        textAlign:  'center',
-      }}>
+      <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 14, color: '#1e2d3d', textAlign: 'center' }}>
         Type a feature request or pick a demo
       </div>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 8,
-        width: '100%',
-        maxWidth: 560,
-        marginTop: 8,
-      }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, width: '100%', maxWidth: 560, marginTop: 8 }}>
         {[
-          { name: 'Database', shortName: 'DB', color: '#00d4ff', desc: 'SQL migration' },
+          { name: 'Database', shortName: 'DB',  color: '#00d4ff', desc: 'SQL migration' },
           { name: 'ORM',      shortName: 'ORM', color: '#10b981', desc: 'Model layer' },
           { name: 'API',      shortName: 'API', color: '#f59e0b', desc: 'Routes layer' },
           { name: 'Frontend', shortName: 'UI',  color: '#a78bfa', desc: 'React component' },
         ].map((agent, i) => (
-          <div key={agent.shortName} style={{
-            padding: '10px 8px',
-            borderRadius: 8,
-            background: '#060a0f',
-            border: '1px solid #1e2d3d',
-            textAlign: 'center',
-          }}>
-            <div style={{ color: agent.color, fontSize: 11, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", marginBottom: 3 }}>
-              {agent.shortName}
-            </div>
+          <div key={agent.shortName} style={{ padding: '10px 8px', borderRadius: 8, background: '#060a0f', border: '1px solid #1e2d3d', textAlign: 'center' }}>
+            <div style={{ color: agent.color, fontSize: 11, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", marginBottom: 3 }}>{agent.shortName}</div>
             <div style={{ color: '#64748b', fontSize: 10 }}>{agent.name}</div>
             <div style={{ color: '#2a3f55', fontSize: 9, marginTop: 2 }}>{agent.desc}</div>
-            {i < 3 && (
-              <div style={{
-                position: 'relative',
-                color: '#1e2d3d',
-                fontSize: 10,
-                marginTop: 4,
-              }}>→</div>
-            )}
+            {i < 3 && <div style={{ color: '#1e2d3d', fontSize: 10, marginTop: 4 }}>→</div>}
           </div>
         ))}
       </div>
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 320, marginTop: 12 }}>
         {ideas.map(idea => (
           <button
             key={idea.value}
             onClick={() => onSelectIdea && onSelectIdea(idea.value)}
+            aria-label={`Use demo: ${idea.label}`}
             style={{
-              padding:      '10px 16px',
-              background:   `${idea.color}08`,
-              border:       `1px solid ${idea.color}22`,
-              borderRadius: 8,
-              color:        '#64748b',
-              fontSize:     12,
-              textAlign:    'left',
-              fontFamily:   "'DM Sans', sans-serif",
-              transition:   'all 0.15s',
+              padding: '10px 16px', background: `${idea.color}08`, border: `1px solid ${idea.color}22`,
+              borderRadius: 8, color: '#64748b', fontSize: 12, textAlign: 'left',
+              fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background   = `${idea.color}12`;
-              e.currentTarget.style.color        = '#94a3b8';
-              e.currentTarget.style.borderColor  = `${idea.color}44`;
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background   = `${idea.color}08`;
-              e.currentTarget.style.color        = '#64748b';
-              e.currentTarget.style.borderColor  = `${idea.color}22`;
-            }}
+            onMouseEnter={e => { e.currentTarget.style.background = `${idea.color}12`; e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.borderColor = `${idea.color}44`; }}
+            onMouseLeave={e => { e.currentTarget.style.background = `${idea.color}08`; e.currentTarget.style.color = '#64748b'; e.currentTarget.style.borderColor = `${idea.color}22`; }}
           >
             {idea.label}
           </button>

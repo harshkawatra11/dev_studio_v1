@@ -10,7 +10,8 @@
 const { spawn, spawnSync } = require('child_process');
 const fs                    = require('fs');
 const path                  = require('path');
-const { snapshotDir, diffSnapshots, SANDBOX } = require('../parser');
+const { snapshotDir, diffSnapshots } = require('../parser');
+const { getTarget }                  = require('../target');
 
 // ── Resolve the codex.js script once at module load ──────────────────────────
 const CODEX_SCRIPT = resolveCodexScript();
@@ -32,46 +33,36 @@ function resolveCodexScript() {
 // ── BaseAgent ────────────────────────────────────────────────────────────────
 
 class BaseAgent {
-  /**
-   * @param {Object} layer        — from AGENT_LAYERS (id, name, shortName, filePattern, color, description)
-   * @param {Function} buildPrompt — (feature, slug, context) => string
-   */
   constructor(layer, buildPrompt) {
     this.layer       = layer;
     this.buildPrompt = buildPrompt;
   }
 
   /**
-   * Run this agent's Codex CLI invocation.
-   *
-   * @param {string}   feature   — the user's feature request
-   * @param {string}   slug      — slugified feature name
-   * @param {Object}   context   — { key: content } of upstream agent outputs to inject into the prompt
-   * @param {Function} onOutput  — (line: string) => void — called for every line of Codex stdout/stderr
-   * @returns {Promise<Object>}  — { filename: { original, generated, isNew, language } } for this layer only
+   * @param {string}      feature
+   * @param {string}      slug
+   * @param {Object}      context   — upstream agent outputs
+   * @param {Function}    onOutput  — (line: string) => void
+   * @param {AbortSignal} [signal]  — cancellation token
    */
-  async run(feature, slug, context, onOutput) {
+  async run(feature, slug, context, onOutput, signal) {
     if (!CODEX_SCRIPT) {
       throw new Error('Codex CLI script not found. Run: npm install -g @openai/codex');
     }
 
-    // 1. Snapshot before
-    const before = snapshotDir(SANDBOX);
+    const target = getTarget();
+    const before  = snapshotDir(target);
+    const prompt  = this.buildPrompt(feature, slug, context);
 
-    // 2. Build the layer-specific prompt
-    const prompt = this.buildPrompt(feature, slug, context);
+    await this._spawnCodex(prompt, onOutput, target, signal);
 
-    // 3. Spawn Codex CLI
-    await this._spawnCodex(prompt, onOutput);
+    const after      = snapshotDir(target);
+    const allDiff    = diffSnapshots(before, after);
 
-    // 4. Snapshot after & diff
-    const after   = snapshotDir(SANDBOX);
-    const allDiff = diffSnapshots(before, after);
-
-    // 5. Filter to only files matching this agent's file pattern
+    // Filter to only files matching this agent's file pattern (endsWith only — no includes)
     const layerChanges = {};
     for (const [filename, info] of Object.entries(allDiff)) {
-      if (filename.endsWith(this.layer.filePattern) || filename.includes(this.layer.filePattern)) {
+      if (filename.endsWith(this.layer.filePattern)) {
         layerChanges[filename] = info;
       }
     }
@@ -80,8 +71,12 @@ class BaseAgent {
   }
 
   /** @private */
-  _spawnCodex(prompt, onOutput) {
+  _spawnCodex(prompt, onOutput, cwd, signal) {
     return new Promise((resolve, reject) => {
+      if (signal?.aborted) {
+        return reject(Object.assign(new Error('Cancelled'), { cancelled: true }));
+      }
+
       const args = [
         CODEX_SCRIPT,
         'exec',
@@ -93,13 +88,20 @@ class BaseAgent {
       let proc;
       try {
         proc = spawn(process.execPath, args, {
-          cwd:   SANDBOX,
+          cwd,
           env:   { ...process.env },
           stdio: ['pipe', 'pipe', 'pipe']
         });
       } catch (err) {
         return reject(new Error(`Failed to spawn Codex CLI: ${err.message}`));
       }
+
+      // Cancel support — kill the child process when the signal fires
+      const onAbort = () => {
+        try { proc.kill(); } catch (_) {}
+        reject(Object.assign(new Error('Cancelled'), { cancelled: true }));
+      };
+      if (signal) signal.addEventListener('abort', onAbort, { once: true });
 
       proc.stdin.write(prompt);
       proc.stdin.end();
@@ -115,11 +117,14 @@ class BaseAgent {
       });
 
       proc.on('close', code => {
-        if (code === 0 || code === null) resolve();
+        if (signal) signal.removeEventListener('abort', onAbort);
+        if (signal?.aborted) return; // already rejected via onAbort
+        if (code === 0) resolve();
         else reject(new Error(`Codex CLI exited with code ${code}`));
       });
 
       proc.on('error', err => {
+        if (signal) signal.removeEventListener('abort', onAbort);
         if (err.code === 'ENOENT') {
           reject(new Error('Codex CLI not found. Run: npm install -g @openai/codex'));
         } else {

@@ -20,7 +20,7 @@ if (count.c === 0) {
   insert.run('Noise Cancelling Earbuds',  89.00, 'Built-in white noise and focus timer integration.',  61);
 }
 
-// Seed two demo users if empty — referral demos need both referrer and referred.
+// Seed demo users
 const userCount = db.prepare('SELECT COUNT(*) as c FROM users').get();
 if (userCount.c === 0) {
   const insertUser = db.prepare('INSERT INTO users (name, email) VALUES (?, ?)');
@@ -28,7 +28,6 @@ if (userCount.c === 0) {
   insertUser.run('Guest User', 'guest@workbench.dev');
 }
 
-// Top up with realistic ShopBase customers for the Orders/Users tabs.
 const userCount2 = db.prepare('SELECT COUNT(*) as c FROM users').get();
 if (userCount2.c < 3) {
   const insertUser = db.prepare('INSERT OR IGNORE INTO users (name, email) VALUES (?, ?)');
@@ -37,7 +36,7 @@ if (userCount2.c < 3) {
   insertUser.run('James Kirk',   'james@shopbase.dev');
 }
 
-// Seed demo orders so the Orders tab has real content on first load.
+// Seed demo orders
 const orderCount = db.prepare('SELECT COUNT(*) as c FROM orders').get();
 if (orderCount.c === 0) {
   const insertOrder = db.prepare(
@@ -48,5 +47,13 @@ if (orderCount.c === 0) {
   insertOrder.run(3, 2, 1, 129.00);
   insertOrder.run(1, 4, 1, 89.00);
 }
+
+// Gracefully close DB on process exit (prevents data corruption on Ctrl+C)
+function gracefulClose() {
+  try { db.close(); } catch { /* already closed */ }
+  process.exit(0);
+}
+process.once('SIGINT',  gracefulClose);
+process.once('SIGTERM', gracefulClose);
 
 module.exports = db;

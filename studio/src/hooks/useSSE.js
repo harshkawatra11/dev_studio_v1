@@ -1,22 +1,6 @@
-import { useState, useRef, useCallback } from 'react';
-import { buildSynthesizeURL } from '../lib/api';
-
-/**
- * Four-agent SSE hook.
- *
- * Tracks per-agent state independently:
- *   idle → start → thinking → [output...] → completed | error | skipped
- *
- * Also supports incremental file-ready events so the DiffExplorer can show
- * tabs appearing as each agent finishes.
- */
-
-const INITIAL_AGENT_STATE = {
-  database: { status: 'idle', messages: [], files: [], elapsed: null },
-  model:    { status: 'idle', messages: [], files: [], elapsed: null },
-  api:      { status: 'idle', messages: [], files: [], elapsed: null },
-  frontend: { status: 'idle', messages: [], files: [], elapsed: null },
-};
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { buildSynthesizeURL, buildRerunURL } from '../lib/api';
+import { INITIAL_AGENT_STATE } from '../lib/agents';
 
 export function useSSE() {
   const [steps,       setSteps]       = useState([]);
@@ -25,124 +9,119 @@ export function useSSE() {
   const [changes,     setChanges]     = useState(null);
   const [isRunning,   setIsRunning]   = useState(false);
   const [error,       setError]       = useState(null);
-  const esRef = useRef(null);
-  const handledErrorRef = useRef(false);
+  const esRef             = useRef(null);
+  const handledErrorRef   = useRef(false);
+  const lastFeatureRef    = useRef(null);
+  const lastModeRef       = useRef(null);
 
-  const synthesize = useCallback((feature, mode) => {
-    if (esRef.current) {
-      esRef.current.close();
-      esRef.current = null;
-    }
+  // Close EventSource on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (esRef.current) { esRef.current.close(); esRef.current = null; }
+    };
+  }, []);
+
+  function _openSSE(url) {
+    if (esRef.current) { esRef.current.close(); esRef.current = null; }
 
     setSteps([]);
     setAgentEvents([]);
     setAgentStates({ ...INITIAL_AGENT_STATE });
-    setChanges(null);
     setError(null);
     setIsRunning(true);
     handledErrorRef.current = false;
 
-    const url = buildSynthesizeURL(feature, mode);
-    const es  = new EventSource(url);
+    const es = new EventSource(url);
     esRef.current = es;
+
+    const AGENT_URL = import.meta.env.VITE_AGENT_URL || 'http://localhost:4000';
 
     const ts = () => new Date().toLocaleTimeString('en-US', {
       hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit'
     });
 
-    // ── Step events (legacy compat) ──
+    // Legacy step events
     es.addEventListener('step', e => {
       try {
         const data = JSON.parse(e.data);
         setSteps(prev => [...prev, { ...data, timestamp: ts() }]);
-      } catch (_) {}
+      } catch (err) { console.warn('[SSE] step parse error', err); }
     });
 
-    // ── Agent lifecycle events ──
+    // Agent lifecycle events
     es.addEventListener('agent', e => {
       try {
-        const data = JSON.parse(e.data);
+        const data  = JSON.parse(e.data);
         const event = { ...data, timestamp: ts() };
 
-        // Append to event log
         setAgentEvents(prev => [...prev, event]);
 
-        // Update per-agent state
         if (data.agentId && data.agentId !== 'coordinator') {
           setAgentStates(prev => {
             const agentState = prev[data.agentId] || { status: 'idle', messages: [], files: [], elapsed: null };
-            const updated = { ...agentState };
+            const updated    = { ...agentState };
 
-            if (data.status === 'start' || data.status === 'thinking' || data.status === 'completed' || data.status === 'error' || data.status === 'skipped') {
+            if (['start', 'thinking', 'completed', 'error', 'skipped'].includes(data.status)) {
               updated.status = data.status;
             }
-
             if (data.status === 'output') {
-              updated.status = 'running';
+              updated.status   = 'running';
               updated.messages = [...agentState.messages, data.message];
             }
-
-            if (data.files && data.files.length > 0) {
-              updated.files = data.files;
-            }
-
-            if (data.elapsed) {
-              updated.elapsed = data.elapsed;
-            }
+            if (data.files && data.files.length > 0) updated.files   = data.files;
+            if (data.elapsed)                         updated.elapsed = data.elapsed;
 
             return { ...prev, [data.agentId]: updated };
           });
         }
 
-        // Also push into the step log for the ThinkingConsole
         setSteps(prev => [...prev, {
-          step: 'AGENT',
-          message: event.message,
-          agentName: event.agentName,
+          step:           'AGENT',
+          message:        event.message,
+          agentName:      event.agentName,
           agentShortName: event.agentShortName,
-          agentColor: event.color,
-          agentId: event.agentId,
-          status: event.status,
-          timestamp: event.timestamp
+          agentColor:     event.color,
+          agentId:        event.agentId,
+          status:         event.status,
+          timestamp:      event.timestamp,
         }]);
-      } catch (_) {}
+      } catch (err) { console.warn('[SSE] agent parse error', err); }
     });
 
-    // ── Incremental file-ready events ──
+    // Incremental file-ready events — merge as they arrive
     es.addEventListener('file-ready', e => {
       try {
         const data = JSON.parse(e.data);
-        // Merge individual file into changes as they arrive
         setChanges(prev => ({
           ...(prev || {}),
           [data.filename]: {
             ...data.change,
-            agentId: data.agentId,
+            agentId:   data.agentId,
             agentName: data.agentName,
-            agentColor: data.agentColor,
+            agentColor:data.agentColor,
           }
         }));
-      } catch (_) {}
+      } catch (err) { console.warn('[SSE] file-ready parse error', err); }
     });
 
-    // ── Pipeline complete ──
+    // Pipeline complete — set final changes (overwrites incremental state with authoritative payload)
     es.addEventListener('complete', e => {
       try {
         const data = JSON.parse(e.data);
-        setChanges(data.changes);
-      } catch (_) {}
+        setChanges(data.changes || null);
+      } catch (err) { console.warn('[SSE] complete parse error', err); }
       setIsRunning(false);
       es.close();
       esRef.current = null;
     });
 
-    // ── Agent error ──
+    // Agent-level error
     es.addEventListener('agent-error', e => {
       handledErrorRef.current = true;
       try {
         const data = JSON.parse(e.data);
         setError(data.message || 'Generation failed');
-      } catch (_) {
+      } catch {
         setError('Connection to agent lost');
       }
       setIsRunning(false);
@@ -150,21 +129,35 @@ export function useSSE() {
       esRef.current = null;
     });
 
-    // ── Transport error ──
+    // Transport error
     es.onerror = () => {
       if (handledErrorRef.current) return;
-      setError('Agent connection failed. Is the agent running on port 4000?');
+      setError(`Agent connection failed. Is the agent running at ${AGENT_URL}?`);
       setIsRunning(false);
       es.close();
       esRef.current = null;
     };
+  }
+
+  const synthesize = useCallback((feature, mode) => {
+    lastFeatureRef.current = feature;
+    lastModeRef.current    = mode;
+    setChanges(null);
+    _openSSE(buildSynthesizeURL(feature, mode));
+  }, []);
+
+  const retry = useCallback(() => {
+    if (!lastFeatureRef.current) return;
+    setChanges(null);
+    _openSSE(buildSynthesizeURL(lastFeatureRef.current, lastModeRef.current || 'demo'));
+  }, []);
+
+  const rerunAgent = useCallback((agentId) => {
+    _openSSE(buildRerunURL(agentId, lastFeatureRef.current));
   }, []);
 
   const cancel = useCallback(() => {
-    if (esRef.current) {
-      esRef.current.close();
-      esRef.current = null;
-    }
+    if (esRef.current) { esRef.current.close(); esRef.current = null; }
     setIsRunning(false);
   }, []);
 
@@ -178,14 +171,8 @@ export function useSSE() {
   }, []);
 
   return {
-    steps,
-    agentEvents,
-    agentStates,
-    changes,
-    isRunning,
-    error,
-    synthesize,
-    cancel,
-    reset
+    steps, agentEvents, agentStates, changes,
+    isRunning, error,
+    synthesize, retry, rerunAgent, cancel, reset,
   };
 }

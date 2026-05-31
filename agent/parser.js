@@ -1,7 +1,9 @@
-const fs   = require('fs');
-const path = require('path');
+const fs     = require('fs');
+const path   = require('path');
+const target = require('./target');
 
-const SANDBOX = path.join(__dirname, '../sandbox');
+// Keep SANDBOX exported for anything that needs the hard-wired path directly
+const SANDBOX = target.getSandboxPath();
 
 const BASELINE_FILES = new Set([
   'schema.sql',
@@ -16,20 +18,26 @@ function snapshotDir(dir) {
   const snapshot = {};
 
   function walk(currentDir, prefix = '') {
-    const entries = fs.readdirSync(currentDir);
+    let entries;
+    try { entries = fs.readdirSync(currentDir); } catch { return; }
+
     for (const entry of entries) {
       if (entry.startsWith('.')) continue;
       if (entry === 'node_modules') continue;
       if (entry === 'public') continue;
 
       const fullPath = path.join(currentDir, entry);
-      const stat     = fs.statSync(fullPath);
-      const key      = prefix ? `${prefix}/${entry}` : entry;
+      let stat;
+      try { stat = fs.statSync(fullPath); } catch { continue; }
+
+      const key = prefix ? `${prefix}/${entry}` : entry;
 
       if (stat.isDirectory()) {
         walk(fullPath, key);
       } else if (stat.isFile()) {
-        snapshot[key] = fs.readFileSync(fullPath, 'utf8');
+        try {
+          snapshot[key] = fs.readFileSync(fullPath, 'utf8');
+        } catch { /* unreadable file — skip */ }
       }
     }
   }
@@ -64,7 +72,7 @@ function diffSnapshots(before, after) {
 
 function detectLanguage(filename) {
   const ext = path.extname(filename).toLowerCase();
-  const map  = {
+  const map = {
     '.sql':  'sql',
     '.js':   'javascript',
     '.jsx':  'javascript',
@@ -78,8 +86,4 @@ function detectLanguage(filename) {
   return map[ext] || 'plaintext';
 }
 
-function getSandboxPath() {
-  return SANDBOX;
-}
-
-module.exports = { snapshotDir, diffSnapshots, getSandboxPath, SANDBOX };
+module.exports = { snapshotDir, diffSnapshots, SANDBOX };

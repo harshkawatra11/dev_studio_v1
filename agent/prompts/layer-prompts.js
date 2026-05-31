@@ -9,15 +9,19 @@
  * code, the route code).
  */
 
-const fs   = require('fs');
-const path = require('path');
-
-const SANDBOX = path.join(__dirname, '../../sandbox');
+const fs     = require('fs');
+const path   = require('path');
+const target = require('../target');
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function readSandboxFile(name) {
-  return fs.readFileSync(path.join(SANDBOX, name), 'utf8');
+  try {
+    return fs.readFileSync(path.join(target.getTarget(), name), 'utf8');
+  } catch {
+    // Fall back to the built-in sandbox if file not found in custom target
+    return fs.readFileSync(path.join(target.getSandboxPath(), name), 'utf8');
+  }
 }
 
 // ── Database Agent Prompt ────────────────────────────────────────────────────
