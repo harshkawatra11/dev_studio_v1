@@ -55,7 +55,7 @@ export default function SandboxPreview({ iframeRef, changes, applyStatus, applyE
           <LiveIndicator />
         </div>
         <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: '#64748b' }}>
-          localhost:5001
+          {import.meta.env.VITE_SANDBOX_URL || 'localhost:5000'}
         </span>
       </div>
 
@@ -73,7 +73,7 @@ export default function SandboxPreview({ iframeRef, changes, applyStatus, applyE
         )}
         <iframe
           ref={iframeRef}
-          src="http://localhost:5001"
+          src={import.meta.env.VITE_SANDBOX_URL || 'http://localhost:5000'}
           onLoad={() => setIframeLoaded(true)}
           sandbox="allow-same-origin allow-scripts allow-forms"
           style={{ width: '100%', height: '100%', background: '#000000' }}
@@ -84,7 +84,7 @@ export default function SandboxPreview({ iframeRef, changes, applyStatus, applyE
       {/* URL bar */}
       <div style={{ padding: '4px 12px', background: '#000000', borderTop: '1px solid #1e2d3d', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
         <span style={{ fontSize: 9, color: '#2a3f55', fontFamily: "'JetBrains Mono', monospace" }}>URL</span>
-        <span style={{ fontSize: 10, color: '#64748b', fontFamily: "'JetBrains Mono', monospace" }}>http://localhost:5001</span>
+        <span style={{ fontSize: 10, color: '#64748b', fontFamily: "'JetBrains Mono', monospace" }}>{import.meta.env.VITE_SANDBOX_URL || 'http://localhost:5000'}</span>
       </div>
 
       {/* Action bar */}
