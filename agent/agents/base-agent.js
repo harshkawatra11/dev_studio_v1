@@ -17,6 +17,11 @@ const { getTarget }                  = require('../target');
 const CODEX_SCRIPT = resolveCodexScript();
 
 function resolveCodexScript() {
+  // Check local node_modules first (works on Railway)
+  const local = path.join(__dirname, '..', 'node_modules', '@openai', 'codex', 'bin', 'codex.js');
+  if (fs.existsSync(local)) return local;
+
+  // Fall back to global install
   const cmd  = process.platform === 'win32' ? 'where' : 'which';
   const what = process.platform === 'win32' ? 'codex.cmd' : 'codex';
   try {
