@@ -1,20 +1,23 @@
 {
   "name": "workbench-studio",
   "version": "1.2.0",
-  "description": "Natural Language Schema Migration tool — OpenAI x Outskill Hackathon",
+  "description": "Natural Language Schema Migration — OpenAI × Outskill Builder Hackathon 2026",
   "scripts": {
-    "dev": "concurrently \"npm run sandbox\" \"npm run sandbox-client\" \"npm run agent\" \"npm run studio\"",
-    "sandbox": "cd sandbox && node server.js",
-    "sandbox-client": "cd sandbox/client && npm run dev",
-    "agent": "cd agent && nodemon index.js",
-    "studio": "cd studio && npm run dev",
-    "jobboard": "concurrently \"npm run jobboard:server\" \"npm run jobboard:client\"",
-    "jobboard:server": "cd app/server && npm run dev",
-    "jobboard:client": "cd app/client && npm run dev"
+    "dev":           "concurrently \"npm run sandbox\" \"npm run sandbox-client\" \"npm run agent\" \"npm run studio\"",
+    "sandbox":       "cd sandbox && node server.js",
+    "sandbox-client":"cd sandbox/client && npm run dev",
+    "agent":         "cd agent && nodemon index.js",
+    "studio":        "cd studio && npm run dev",
+    "jobboard":      "concurrently \"npm run jobboard:server\" \"npm run jobboard:client\"",
+    "jobboard:server":"cd app/server && npm run dev",
+    "jobboard:client":"cd app/client && npm run dev",
+    "install:all":   "npm install && cd sandbox && npm install && cd ../sandbox/client && npm install && cd ../../agent && npm install && cd ../studio && npm install && cd ../app/server && npm install && cd ../client && npm install && cd ../..",
+    "build:all":     "cd studio && npm run build && cd ../sandbox/client && npm run build && cd ../../app/client && npm run build && cd ../..",
+    "build:studio":  "cd studio && npm run build",
+    "build:jobboard":"cd app/client && npm run build"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
-    "nodemon": "^3.0.0",
-    "playwright": "^1.60.0"
+    "nodemon": "^3.0.0"
   }
 }
