@@ -106,26 +106,44 @@ export default function PromptBar({ feature, setFeature, mode, setMode, onSynthe
 function ModeToggle({ mode, setMode, isRunning }) {
   return (
     <div style={{ display: 'flex', gap: 4, padding: '3px', background: '#111820', borderRadius: 8, border: '1px solid #1e2d3d' }}>
-      {['demo', 'live'].map(m => (
-        <button
-          key={m}
-          onClick={() => !isRunning && setMode(m)}
-          style={{
-            padding:       '3px 10px',
-            borderRadius:  6,
-            fontSize:      11,
-            fontFamily:    "'JetBrains Mono', monospace",
-            fontWeight:    600,
-            letterSpacing: '0.05em',
-            color:         mode === m ? (m === 'demo' ? '#000' : '#fff') : '#64748b',
-            background:    mode === m ? (m === 'demo' ? '#10b981' : '#7c3aed') : 'transparent',
-            transition:    'all 0.15s',
-            opacity:       isRunning ? 0.6 : 1,
-          }}
-        >
-          {m === 'demo' ? '🛡 Demo' : '⚡ Live AI'}
-        </button>
-      ))}
+      {/* Demo — always available */}
+      <button
+        onClick={() => !isRunning && setMode('demo')}
+        style={{
+          padding:       '3px 10px',
+          borderRadius:  6,
+          fontSize:      11,
+          fontFamily:    "'JetBrains Mono', monospace",
+          fontWeight:    600,
+          letterSpacing: '0.05em',
+          color:         mode === 'demo' ? '#000' : '#64748b',
+          background:    mode === 'demo' ? '#10b981' : 'transparent',
+          transition:    'all 0.15s',
+          opacity:       isRunning ? 0.6 : 1,
+        }}
+      >
+        🛡 Demo
+      </button>
+
+      {/* Live AI — requires local Codex CLI + OpenAI key */}
+      <button
+        title="Requires OpenAI API key + Codex CLI installed locally"
+        style={{
+          padding:       '3px 10px',
+          borderRadius:  6,
+          fontSize:      11,
+          fontFamily:    "'JetBrains Mono', monospace",
+          fontWeight:    600,
+          letterSpacing: '0.05em',
+          color:         '#334155',
+          background:    'transparent',
+          cursor:        'not-allowed',
+          opacity:       0.4,
+          position:      'relative',
+        }}
+      >
+        ⚡ Live AI
+      </button>
     </div>
   );
 }
